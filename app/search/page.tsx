@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import BuildingCard from "@/components/building-card"
 import { buildings } from "@/lib/data"
 import Link from "next/link"
+import Image from "next/image"
 
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState("")
