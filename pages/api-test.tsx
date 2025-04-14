@@ -2,7 +2,30 @@
 
 import { useState, useEffect } from 'react'
 import { Building } from '@/lib/types'
-import { loadBuildings, saveBuildings } from '@/lib/api/buildings'
+import { loadBuildings as fetchBuildings } from '@/lib/api'
+
+// Define a wrapper for saveBuildings using existing API functions
+async function saveBuildings(buildings: Building[]): Promise<string> {
+  try {
+    const response = await fetch('/api/buildings', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(buildings),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to save buildings: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    return data.message || 'Buildings saved successfully';
+  } catch (error) {
+    console.error("Error saving buildings:", error);
+    throw error instanceof Error ? error : new Error('Unknown error');
+  }
+}
 
 export default function ApiTest() {
   const [buildings, setBuildings] = useState<Building[]>([])
@@ -19,7 +42,7 @@ export default function ApiTest() {
     setStatus('Loading buildings...')
     
     try {
-      const buildingsData = await loadBuildings()
+      const buildingsData = await fetchBuildings()
       setBuildings(buildingsData)
       setStatus(`Loaded ${buildingsData.length} buildings successfully`)
     } catch (error) {
